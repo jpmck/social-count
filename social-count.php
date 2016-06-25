@@ -54,21 +54,21 @@ class SocialCount
 
   // GET FACEBOOK LIKES FUNCTION
   // returns number of Facebook likes for provided URL
-  private function getFacebookLikes($url)
+  private function getFacebookLikes()
   {
-    $json_string = file_get_contents('http://graph.facebook.com/?ids=' . $url);
+    $json_string = file_get_contents('http://graph.facebook.com/?ids=' . $this->$url);
     $json = json_decode($json_string, true);
-    return intval($json[$url]['shares']);
+    return intval($json[$this->$url]['shares']);
   }
 
   // GET GOOGLE PLUS ONES FUNCTION
   // returns number of Google+ +1s for provided URL
-  private function getGooglePlusOnes($url)
+  private function getGooglePlusOnes()
   {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, "https://clients6.google.com/rpc");
     curl_setopt($curl, CURLOPT_POST, 1);
-    curl_setopt($curl, CURLOPT_POSTFIELDS, '[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"' . $url . '","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"2.0","key":"p","apiVersion":"v1"}]');
+    curl_setopt($curl, CURLOPT_POSTFIELDS, '[{"method":"pos.plusones.get","id":"p","params":{"nolog":true,"id":"' . $this->$url . '","source":"widget","userId":"@viewer","groupId":"@self"},"jsonrpc":"2.0","key":"p","apiVersion":"v1"}]');
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
     $curl_results = curl_exec ($curl);
@@ -79,26 +79,26 @@ class SocialCount
 
   // GET LINKEDIN SHARES FUNCTION
   // returns number of LinkedIn shares for provided URL
-  private function getLinkedInShares($url)
+  private function getLinkedInShares()
   {
-    $json_string = file_get_contents('http://www.linkedin.com/countserv/count/share?url=' . $url . '&format=json');
+    $json_string = file_get_contents('http://www.linkedin.com/countserv/count/share?url=' . $this->$url . '&format=json');
     $json = json_decode($json_string, true);
     return intval( $json['count'] );
   }
 
   // GET STUMBLES FUNCTION
   // returns number of StumbleUpon Stumbles for provided URL
-  private function getStumbles($url)
+  private function getStumbles()
   {
-    $json_string = file_get_contents('http://www.stumbleupon.com/services/1.01/badge.getinfo?url=' . $url);
+    $json_string = file_get_contents('http://www.stumbleupon.com/services/1.01/badge.getinfo?url=' . $this->$url);
     $json = json_decode($json_string, true);
     return intval($json['result']['views']);
   }
   // GET TWEETS FUNCTION
   // returns number of Twitter tweets for provided URL
-  private function getTweets($url)
+  private function getTweets()
   {
-    $json_string = file_get_contents('https://api.twitter.com/1.1/search/tweets.json?q=' . $url);
+    $json_string = file_get_contents('https://api.twitter.com/1.1/search/tweets.json?q=' . $this->$url);
     $json = json_decode($json_string, true);
     return intval( $json['count'] );
   }
