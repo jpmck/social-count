@@ -2,25 +2,68 @@
 
 class SocialCount
 {
-  // variables
+  // PUBLIC VARIABLES -----------------------------------------------------------------------------
+
   public $url;
+  public $counts;
 
-  public $facebook_likes;
-  public $google_plus_ones;
-  public $linkedin_shares;
-  public $stumbles;
-  public $tweets;
+  // PUBLIC FUNCTIONS -----------------------------------------------------------------------------
 
+  // CONSTRUCTOR FUNCTION
+  //
+  public function __construct($url_in)
+  {
+    if (filter_var($new_url, FILTER_VALIDATE_URL))
+    {
+      $url_in = $this->$url;
+      updateCounts();
+    }
+    else
+    {
+      echo 'The string given as a URL (' . $new_url . ') for this object is not a valid URL.';
+    }
+  }
+
+  // UPDATE COUNTS FUNCTION
+  // queries each social media site and updates each portion of the array
+  public function updateCounts()
+  {
+    $counts['facebook'] = getFacebookLikes($url);
+    $counts['google_plus'] = getGooglePlusOnes($url);
+    $counts['linkedin'] = getLinkedInShares($url);
+    $counts['stumble_upon'] = getStumbles($url);
+    $counts['tweets'] = getTweets($url);
+  }
+
+  // UPDATE URL FUNCTION
+  // updates the array that is entered and updates the counts
+  public function updateUrl($new_url)
+  {
+    if (filter_var($new_url, FILTER_VALIDATE_URL))
+    {
+      $new_url = $this->$url;
+      updateCounts();
+    }
+    else
+    {
+      echo 'The string given for a new URL (' . $new_url . ') is not a valid URL.';
+    }
+  }
+
+  // PRIVATE FUNCTIONS ----------------------------------------------------------------------------
+
+  // GET FACEBOOK LIKES FUNCTION
   // returns number of Facebook likes for provided URL
-  function getFacebookLikes($url)
+  private function getFacebookLikes($url)
   {
     $json_string = file_get_contents('http://graph.facebook.com/?ids=' . $url);
     $json = json_decode($json_string, true);
-    $facebook_likes = intval( $json[$url]['shares'] );
+    return intval($json[$url]['shares']);
   }
 
+  // GET GOOGLE PLUS ONES FUNCTION
   // returns number of Google+ +1s for provided URL
-  function getGooglePlusOnes($url)
+  private function getGooglePlusOnes($url)
   {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, "https://clients6.google.com/rpc");
@@ -31,30 +74,33 @@ class SocialCount
     $curl_results = curl_exec ($curl);
     curl_close ($curl);
     $json = json_decode($curl_results, true);
-    $google_plus_ones = intval( $json[0]['result']['metadata']['globalCounts']['count'] );
+    return intval( $json[0]['result']['metadata']['globalCounts']['count'] );
   }
 
+  // GET LINKEDIN SHARES FUNCTION
   // returns number of LinkedIn shares for provided URL
-  function getLinkedInShares($url)
+  private function getLinkedInShares($url)
   {
     $json_string = file_get_contents('http://www.linkedin.com/countserv/count/share?url=' . $url . '&format=json');
     $json = json_decode($json_string, true);
-    $linkedin_shares = intval( $json['count'] );
+    return intval( $json['count'] );
   }
 
+  // GET STUMBLES FUNCTION
   // returns number of StumbleUpon Stumbles for provided URL
-  function getStumbles($url)
+  private function getStumbles($url)
   {
     $json_string = file_get_contents('http://www.stumbleupon.com/services/1.01/badge.getinfo?url=' . $url);
     $json = json_decode($json_string, true);
-    $stumbles = intval($json['result']['views']);
+    return intval($json['result']['views']);
   }
+  // GET TWEETS FUNCTION
   // returns number of Twitter tweets for provided URL
-  function getTweets($url)
+  private function getTweets($url)
   {
     $json_string = file_get_contents('https://api.twitter.com/1.1/search/tweets.json?q=' . $url);
     $json = json_decode($json_string, true);
-    $tweets = intval( $json['count'] );
+    return intval( $json['count'] );
   }
 }
 ?>
